@@ -16,7 +16,57 @@ const backgroundGradients = [
 ]
 
 class App extends Component {
+  bots = [{
+    name: 'Emojibot 101',
+    image: 'emojibot_banner.png',
+  }, {
+    name: 'Garkov PostBot 1978',
+    image: 'garkov_banner.png'
+  }, {
+    name: 'AcronymBot0000',
+    image: 'acronym_banner.png'
+  }, {
+    name: 'VsauceBot Here',
+    image: 'vsaucebot_banner.png'
+  }, {
+    name: 'Psychedelic PostBot1337',
+    image: 'psychedelic_banner.png'
+  }];
+
+  socials = [{
+    name: 'YouTube',
+    url: '#',
+    gradient: [['#760700', '#de2925']]
+  }, {
+    name: 'Instagram',
+    url: '#',
+    gradient: [['#fcb84e', '#c5256b', '#7322bf']]
+  }, {
+    name: 'GitHub',
+    url: '#',
+    gradient: [['#171717', '#4f4f4f']]
+  }]
+
+  constructor (props) {
+    super (props);
+    this.state = {
+      repos: []
+    }
+  }
+
+  componentDidMount () {
+    fetch ('https://api.github.com/users/andithemudkip/repos').then (res => res.json ()).then (res => {
+      res = res.filter (r => !r.fork);
+      res = res.sort ((a, b) => (b.stargazers_count + b.watchers_count) - (a.stargazers_count + a.watchers_count))
+      this.setState ({
+        repos: res
+      });
+      console.log (res);
+    });
+  }
+
   render () {
+    const { repos } = this.state;
     return (
       <div className = "App">
         <Gradient
@@ -29,7 +79,7 @@ class App extends Component {
             transitionType = "sequential"
         >
           <Parallax pages = { 3 } scrolling = { true } ref = {ref => this.parallax = ref}>
-            <ParallaxLayer offset = { 0 } speed = { 0.5 }>
+            <ParallaxLayer offset = { 0.3 } speed = { 0.5 }>
               <Gradient
                 gradients={ textGradients } // required
                 property="text"
@@ -39,42 +89,96 @@ class App extends Component {
                 className = "big-text border-white"
                 transitionType = "sequential"
               >
-                Hello!
+                Hello! I'm Andi.
               </Gradient>
             </ParallaxLayer>
-            <ParallaxLayer offset = { 0.25 } speed = { 1 }>
+            <ParallaxLayer offset = { 1.35 } speed = { 1.25 }>
                 <div className = "small-text" style = {{ backgroundColor: 'transparent' }}>
-                  I'm <span style = {{fontFamily: 'Fredoka One'}} >Andi</span>. I love creating. I have created these things™:
+                  <div className = "paragraph-title">
+                    I love creating. I have created these things™:
+                  </div>
                 </div>
             </ParallaxLayer>
 
-            <ParallaxLayer offset = { 0.4 } speed = { 1.35 }>
+            <ParallaxLayer offset = { 1.55 } speed = { 1.35 }>
+              <div className = "grid-container">
                 <div className = "small-text">
                   <div className = "paragraph-title">
                     Facebook bots:
                   </div>
                   <ul className = "bot-list">
-                    <li>
-                      <img src = {require ('../assets/emojibot_banner.png')}/>
-                      <div className = "bot-title">Emojibot 101</div>
-                    </li>
-                    <li>
-                      <img src = {require ('../assets/garkov_banner.png')}/>
-                      <div className = "bot-title">Garkov PostBot 1978</div>
-                    </li>
-                    <li>AcronymBot0000</li>
-                    <li>VsauceBot Here</li>
-                    <li>PsychedelicPostBot1337</li>
-                    <li>Text2SpeechBot 0010</li>
+                    {
+                      this.bots.map (bot => {
+                        return (
+                          <li key = {bot.name}>
+                            <img src = {require (`../assets/${bot.image}`)}/>
+                            <div className = "bot-title">{bot.name}</div>
+                          </li>
+                        )
+                      })
+                    }
                   </ul>
                 </div>
+
+                <div className = "small-text" id = "repos-container">
+                  <div className = "paragraph-title">
+                    Github Repos:
+                  </div>
+                  <ul className = "repo-list">
+                    {
+                      repos.map (repo => {
+                        return (
+                          <li key = {repo.name}>
+                            <div onClick = {() => { window.open (repo.html_url, "_blank") }} className = "repo-title">{repo.name}</div>
+                          </li>
+                        )
+                      })
+                    }
+                  </ul>
+                </div>
+              </div>
             </ParallaxLayer>
 
-            {/* <ParallaxLayer offset = { 0.25 } speed = { 1 }>
+            <ParallaxLayer offset = { 2 } speed = { 1 }>
                 <div className = "small-text">
-                  I'm Andi. I love creating. I have created these things™:
+                  <div className = "paragraph-title">
+                    You can find me on:
+                  </div>
                 </div>
-            </ParallaxLayer> */}
+                <div>
+                  {
+                    this.socials.map (s => {
+                      console.log (s);
+                      return (
+                        <Gradient
+                          gradients={ s.gradient } // required
+                          property="background"
+                          duration={ 6000 }
+                          angle="45deg"
+                          element = "div"
+                          style = {{ fontFamily: "Fredoka One", color: 'white' }}
+                          className = "small-text"
+                          transitionType = "sequential"
+                        >
+                          {s.name}
+                        </Gradient>
+                      )
+                    })
+                  }
+                  {/* <div className = "small-text">
+                    <div className = "paragraph-title">
+                      SoundCloud
+                    </div>
+                  </div>
+                  <div className = "small-text">
+                    <div className = "paragraph-title">
+                      YouTube
+                    </div>
+                  </div> */}
+                </div>
+                
+            </ParallaxLayer>
+            
   
           </Parallax>
         </Gradient>
